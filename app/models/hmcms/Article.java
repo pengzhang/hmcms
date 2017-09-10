@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-import annotations.Exclude;
-import annotations.Hidden;
 import annotations.Upload;
-import models.BaseModel;
+import models.hmcms.enumtype.Open;
+import models.hmcms.enumtype.Quality;
+import models.hmcms.enumtype.Recommend;
 import play.data.validation.MaxSize;
 
 /**
@@ -35,20 +37,9 @@ public class Article extends CmsModel implements Serializable {
 	@Column(columnDefinition = "varchar(500) comment '封面图'")
 	public String cover;
 	
-	@Column(columnDefinition = "varchar(100) comment '作者'")
-	public String author;
-	
-	@Exclude
-	@Column(columnDefinition = "tinyint default 0 comment '类型:0:普通,2:置顶'")
-	public boolean recommend = false; 
-	
-	@Exclude
-	@Column(columnDefinition = "tinyint default 1 comment '类型:0:私有,1:公开'")
-	public boolean open = true; 
-	
-	@Exclude
-	@Column(columnDefinition = "tinyint default 0 comment '类型:0:普通,1:精华'")
-	public boolean quality = false; 
+	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "varchar(50) comment '类型:0:私有,1:公开'")
+	public Open open = Open.common;
 	
 	public Article() {
 		super();

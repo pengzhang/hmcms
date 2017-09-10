@@ -4,6 +4,11 @@
 
 #hmcms.name=hmcms
 
+#Eumn
+common=普通
+free=免费
+ticket=单独购票
+
 AdminArticles=文章管理
 Article=文章
 title=标题

@@ -12,23 +12,21 @@
 			    </div>
 			
 			    <div id="crudListTable">
-			        #{crud.table fields:['id', 'title','cover','author','vtype','tryout_time','v_seq', 'createDate', 'updateDate']}
-			         #{crud.custom 'author'}
-				        	${object.author}
-				     #{/crud.custom}
+			        #{crud.table fields:['id', 'title','cover','vtype','tryout_time','v_seq','recommend','quality', 'author','createDate', 'updateDate']}
 			         #{crud.custom 'cover'}
 				        	<img src="${object.cover}" width="100" height="100" />
 				     #{/crud.custom}
 				     #{crud.custom 'vtype'}
-				        	#{if object.vtype == 1}
-				        		免费
-				        	#{/if}
-				        	#{elseif object.vtype == 2}
-				        		VIP
-				        	#{/elseif}
-				        	#{else}
-				        		单独购票
-				        	#{/else}
+				        	&{object.vtype}
+				     #{/crud.custom}
+				     #{crud.custom 'recommend'}
+				        	&{object.recommend}
+				     #{/crud.custom}
+				     #{crud.custom 'quality'}
+				        	&{object.quality}
+				     #{/crud.custom}
+				     #{crud.custom 'author'}
+				        	${object.author}
 				     #{/crud.custom}
 			         #{crud.custom 'createDate'}
 				        	${object.createDate.format('yyyy-MM-dd HH:mm:ss')}

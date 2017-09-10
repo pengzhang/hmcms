@@ -12,7 +12,7 @@
 			    </div>
 			
 			    <div id="crudListTable">
-			        #{crud.table fields:['id', 'title','cover','author', 'recommend','open','quality','createDate', 'updateDate']}
+			        #{crud.table fields:['id', 'title','cover', 'recommend','open','quality','author','createDate', 'updateDate']}
 			         #{crud.custom 'cover'}
 				        	<img src="${object.cover}" width="100" height="100" />
 				     #{/crud.custom}
@@ -20,13 +20,13 @@
 				        	${object.author}
 				     #{/crud.custom}
 				     #{crud.custom 'recommend'}
-				        	${object.recommend?'置顶':'普通'}
+				        	&{object.recommend}
 				     #{/crud.custom}
 				     #{crud.custom 'open'}
-				        	${object.open?'公开':'私有'}
+				        	&{object.open}
 				     #{/crud.custom}
 				     #{crud.custom 'quality'}
-				        	${object.quality?'精华':'普通'}
+				        	&{object.quality}
 				     #{/crud.custom}
 			         #{crud.custom 'createDate'}
 				        	${object.createDate.format('yyyy-MM-dd HH:mm:ss')}

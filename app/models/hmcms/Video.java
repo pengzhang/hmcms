@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-import annotations.Exclude;
-import annotations.Hidden;
 import annotations.Upload;
-import models.BaseModel;
+import models.hmcms.enumtype.VideoType;
 import play.data.validation.MaxSize;
 
 /**
@@ -38,12 +38,9 @@ public class Video extends CmsModel implements Serializable {
 	@Column(columnDefinition = "varchar(500) comment '封面图'")
 	public String cover;
 	
-	@Column(columnDefinition = "varchar(100) comment '作者'")
-	public String author;
-	
-	@Exclude
-	@Column(columnDefinition = "tinyint default 1 comment '视频播放类型:1-免费,2-vip,3-单独购票'")
-	public int vtype ;
+	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "varchar(50) comment '视频播放类型:1-免费,2-vip,3-单独购票'")
+	public VideoType vtype ;
 	
 	@Column(columnDefinition="int default 60 comment '试播时长'")
 	public int tryout_time;
