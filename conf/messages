@@ -1,0 +1,26 @@
+# Default hmcms messages
+# You can specialize this file for each language.
+# For exemple, for french create a messages.fr file
+
+#hmcms.name=hmcms
+
+AdminArticles=文章管理
+Article=文章
+title=标题
+content=内容正文
+cover=封面图
+author=作者
+view_total=浏览总数
+comment_total=评论总数
+like_total=赞总数
+recommend=推荐
+open=公开
+quality=精华
+
+AdminVideos=视频管理
+Video=视频
+video_desc=视频简介
+video_url=视频链接
+vtype=视频播放类型
+tryout_time=试播时长
+v_seq=视频展示顺序

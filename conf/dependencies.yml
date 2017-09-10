@@ -1,0 +1,12 @@
+self: play -> hmcms 0.1
+
+require:
+    - play
+    - hmcore -> hmcore latest.integration
+    
+repositories:
+    - HM55Modules:
+        type: local  
+        artifact: "${application.path}/../[module]"  
+        contains:
+            - hmcore

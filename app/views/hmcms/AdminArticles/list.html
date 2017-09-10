@@ -1,0 +1,47 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('crud.list.title', type.name) /}
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2">	
+	<div class="row">
+		<div class="col-lg-12">
+			<div id="crudList" class="${type.name}">
+			
+			    <h2 id="crudListTitle">&{'crud.list.title', type.name}</h2>
+			
+			    <div id="crudListSearch">
+			        #{crud.search /}
+			    </div>
+			
+			    <div id="crudListTable">
+			        #{crud.table fields:['id', 'title','cover','author', 'recommend','open','quality','createDate', 'updateDate']}
+			         #{crud.custom 'cover'}
+				        	<img src="${object.cover}" width="100" height="100" />
+				     #{/crud.custom}
+				     #{crud.custom 'author'}
+				        	${object.author}
+				     #{/crud.custom}
+				     #{crud.custom 'recommend'}
+				        	${object.recommend?'置顶':'普通'}
+				     #{/crud.custom}
+				     #{crud.custom 'open'}
+				        	${object.open?'公开':'私有'}
+				     #{/crud.custom}
+				     #{crud.custom 'quality'}
+				        	${object.quality?'精华':'普通'}
+				     #{/crud.custom}
+			         #{crud.custom 'createDate'}
+				        	${object.createDate.format('yyyy-MM-dd HH:mm:ss')}
+				     #{/crud.custom}
+				     #{crud.custom 'updateDate'}
+				        	${object.updateDate.format('yyyy-MM-dd HH:mm:ss')}
+				     #{/crud.custom}
+			        #{/crud.table}
+			    </div>
+			
+			    <div id="crudListPagination">
+			        #{crud.pagination /}
+			    </div>
+			    
+			</div>
+		</div>
+	</div>
+</div>
