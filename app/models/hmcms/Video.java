@@ -1,11 +1,17 @@
 package models.hmcms;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import annotations.Upload;
@@ -47,6 +53,9 @@ public class Video extends CmsModel implements Serializable {
 	
 	@Column(columnDefinition="int default 0 comment '视频展示顺序'")
 	public int v_seq;
+	
+	@ManyToMany(cascade=CascadeType.REFRESH)
+	public List<Category> categories = new ArrayList<>();
 
 	public Video() {
 		super();

@@ -1,17 +1,19 @@
 package models.hmcms;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import annotations.Upload;
 import models.hmcms.enumtype.Open;
-import models.hmcms.enumtype.Quality;
-import models.hmcms.enumtype.Recommend;
 import play.data.validation.MaxSize;
 
 /**
@@ -40,6 +42,9 @@ public class Article extends CmsModel implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "varchar(50) comment '类型:0:私有,1:公开'")
 	public Open open = Open.common;
+	
+	@ManyToMany(cascade=CascadeType.REFRESH)
+	public List<Category> categories = new ArrayList<>();
 	
 	public Article() {
 		super();
