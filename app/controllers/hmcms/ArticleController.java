@@ -31,7 +31,7 @@ public class ArticleController extends Controller {
 	@Gets({@Get("/articles/by/category"),@Get("/articles/by/category.{format}")})
 	public static void articleByCategoryList(long categoryId, int page, int size) {
 		
-		List<Article> articles = Article.find("from Article a , Category c where c.id=?", categoryId).fetch(page, size);
+		List<Article> articles = Article.find("from Article a left join a.categories c where c.id=?", categoryId).fetch(page, size);
 		renderArgs.put("status", true);
 		renderArgs.put("message", "获取文章信息成功");
 		renderArgs.put("data", articles);
