@@ -1,0 +1,52 @@
+#{extends '/hmcms/layout/cms.html' /}
+
+<div id="main">
+	<div class="row">
+		<div class="col-md-8">
+			<div id="hotnews">
+				<div class="hot-header">
+					<b>文章列表</b>
+					<span class="label label-info pull-right">${tag.tag}</span>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane in active" id="tab1">
+						<div class="hot-content">
+							<div id="section">
+							#{include '/hmcms/ArticleController/sectionArticles.html' /}
+							</div>
+							<div class="readmore"><a href="javascript:;">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			#{include '/hmcms/ArticleController/articlesTagSideBar.html' /}
+		</div>
+	</div>
+</div>
+
+#{set 'js'}
+<script>
+	$(function(){
+		var page = 2;
+		$(".readmore").click(function(){
+			$.ajax({
+				url:'/articles/new?tagId=${tagId}&page='+page,
+				type:'get',
+				success:function(data){
+					if(data){
+						$("#tab1 .hot-content #section").append(data);
+						newestPage++;
+					}else{
+						$("#tab1 .readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+	})
+</script>
+#{/set}

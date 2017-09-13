@@ -27,39 +27,40 @@ public class ArticleController extends Controller {
 
 	@Get("/articles")
 	public static void articleList(int page, int size) {
-		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
+		List<Article> articles = Article.find("status=? order by createDate desc",false).fetch(page, size);
 		render(articles,page,size);
 	}
 	
 	@Get("/articles/new")
 	public static void articleByNew(int page, int size) {
-		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
+		List<Article> articles = Article.find("status=? order by createDate desc",false).fetch(page, size);
 		render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
 	}
 	
 	@Get("/articles/hot")
 	public static void articleByHot(int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.comments c group by a.id order by count(c.id) desc, a.createDate desc").fetch(page, size);
+		List<Article> articles = Article.find("select a from Article a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.createDate desc",false).fetch(page, size);
 		page = page + 2;
-		render("/hmcms/ArticleController/sectionArticles.html",articles, page, size);
+		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 	
 	@Get("/articles/focus")
 	public static void articleByFocus(int page, int size) {
-		List<Article> articles = Article.find("recommend=? and quality=? order by createDate desc", Recommend.recommend, Quality.quality).fetch(page, size);
-		render("/hmcms/ArticleController/sectionArticles.html",articles, page, size);
+		List<Article> articles = Article.find("recommend=? and quality=? and status=? order by createDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
+		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 
 	@Get("/articles/by/category")
 	public static void articleByCategoryList(long categoryId, int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.categories c where c.id=?", categoryId).fetch(page, size);
+		List<Article> articles = Article.find("select a from Article a left join a.categories c where c.id=? and a.status=?", categoryId, false).fetch(page, size);
 		render(articles, categoryId, page, size);
 	}
 
 	@Get("/articles/by/tag")
 	public static void articleByTagList(long tagId, int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=?", tagId).fetch(page, size);
-		render(articles, tagId, page, size);
+		Tag tag = Tag.findById(tagId);
+		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=? and a.status=?", tagId, false).fetch(page, size);
+		render(articles, tagId, tag, page, size);
 	}
 	
 	@Before
@@ -81,8 +82,8 @@ public class ArticleController extends Controller {
 	private static void getTags(){
 		List<Tag> tags = (List<Tag>) Cache.get("article_tags");
 		if(tags == null) {
-			tags = Tag.find("select t from Article a left join a.tags as t group by t.tag order by t.createDate desc").fetch(10);
-			Cache.set("article_tags", tags);
+			tags = Tag.find("select t from Article a left join a.tags as t where a.status=? group by t.tag order by t.createDate desc", false).fetch(10);
+			Cache.set("article_tags", tags, "1h");
 		}
 		renderArgs.put("article_tags", tags);
 	}
@@ -91,7 +92,8 @@ public class ArticleController extends Controller {
 	private static void getRecommendArticles(){
 		List<Article> recommendArticles = (List<Article>) Cache.get("article_recommends"); 
 		if(recommendArticles == null) {
-			recommendArticles = Article.find("recommend=? order by createDate desc", Recommend.recommend).fetch(3);
+			recommendArticles = Article.find("recommend=? and status=?order by createDate desc", Recommend.recommend, false).fetch(3);
+			Cache.set("article_recommends", recommendArticles, "1h");
 		}
 		renderArgs.put("article_recommends", recommendArticles);
 	}
