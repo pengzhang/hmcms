@@ -18,23 +18,29 @@ import plugins.router.Get;
 
 @With({ActionIntercepter.class})
 public class ArticleController extends Controller {
-
-	@Get("/articles")
-	public static void articleList(int page, int size) {
-		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
-		Logger.info("articles %s", Json.encode(articles));
-		render(articles,page,size);
-	}
-
+	
 	@Get("/article")
 	public static void article(long id) {
 		Article article = Article.findById(id);
 		render(article);
 	}
+
+	@Get("/articles")
+	public static void articleList(int page, int size) {
+		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
+		render(articles,page,size);
+	}
+	
+	@Get("/articles/new")
+	public static void articleByNew(int page, int size) {
+		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
+		render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
+	}
 	
 	@Get("/articles/hot")
 	public static void articleByHot(int page, int size) {
 		List<Article> articles = Article.find("select a from Article a left join a.comments c group by a.id order by count(c.id) desc, a.createDate desc").fetch(page, size);
+		page = page + 2;
 		render("/hmcms/ArticleController/sectionArticles.html",articles, page, size);
 	}
 	

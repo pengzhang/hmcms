@@ -34,13 +34,13 @@
 				<div class="hot-header">
 					<ul class="nav nav-pills pull-right">
 						<li class="active">
-							<a href="#tab1" id="tab1_btn" data-toggle="tab">最新</a>
+							<a href="#tab1" class="newest" data-toggle="tab">最新</a>
 						</li>
 						<li>
-							<a href="#tab2" id="tab2_btn" data-toggle="tab">最热</a>
+							<a href="#tab2" class="hotest" data-toggle="tab">最热</a>
 						</li>
 						<li>
-							<a href="#tab3" id="tab3_btn" data-toggle="tab">焦点</a>
+							<a href="#tab3" class="focusest" data-toggle="tab">焦点</a>
 						</li>
 					</ul>
 					<b>文章列表</b>
@@ -48,35 +48,23 @@
 				<div class="tab-content">
 					<div class="tab-pane in active" id="tab1">
 						<div class="hot-content">
-							#{list articles, as:'article'}
-							<div class="item">
-								#{if article.cover}
-								<div class="item-img">
-									<a href="/article?id=${article.id}">
-										<img src="${article.cover}" />
-									</a>
-								</div>
-								#{/if}
-								<div class="item-content">
-									<div class="item-heading"><a href="/article?id=${article.id}">${article.title}</a></div>
-									<div class="item-tag">
-										#{list article.tags, as:'tag'}
-										<span class="tag">${tag.tag}</span>
-										#{/list}
-										<span class="time">${article.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
-									</div>
-									<div class="item-nr">
-										${article.content.htmlText().cutString(150)}
-									</div>
-								</div>
+							<div id="section">
+							#{include '/hmcms/ArticleController/sectionArticles.html' /}
 							</div>
-							#{/list}
-							<div class="readmore"><a href="/articles?page=${page+1}&size=${size}">加载更多 <i class="icon-chevron-down"></i></a></div>
+							<div class="readmore"><a href="javascript:;" class="newest">加载更多 <i class="icon-chevron-down"></i></a></div>
 						</div>
 					</div>
 					<div class="tab-pane" id="tab2">
+						<div class="hot-content">
+							<div id="section"></div>
+							<div class="readmore"><a href="javascript:;" class="hotest">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
 					</div>
 					<div class="tab-pane" id="tab3">
+						<div class="hot-content">
+							<div id="section"></div>
+							<div class="readmore"><a href="javascript:;" class="focusest">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -111,12 +99,20 @@
 #{set 'js'}
 <script>
 	$(function(){
-		$("#tab2_btn").click(function(){
+		var newestPage = 2;
+		var hotestPage = 1;
+		var focusestPage = 1;
+		$(".newest").click(function(){
 			$.ajax({
-				url:'/articles/hot',
+				url:'/articles/new?page='+newestPage,
 				type:'get',
 				success:function(data){
-					$("#tab2").html(data);
+					if(data){
+						$("#tab1 .hot-content #section").append(data);
+						newestPage++;
+					}else{
+						$("#tab1 .readmore").remove();
+					}
 				},
 				error:function(e){
 					console.log(e);
@@ -124,12 +120,35 @@
 			})
 		})
 		
-		$("#tab3_btn").click(function(){
+		$(".hotest").click(function(){
 			$.ajax({
-				url:'/articles/focus',
+				url:'/articles/hot?page='+hotestPage,
 				type:'get',
 				success:function(data){
-					$("#tab3").html(data);
+					if(data){
+						$("#tab2 .hot-content #section").append(data);
+						hotestPage++;
+					}else{
+						$("#tab2 .readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		
+		$(".focusest").click(function(){
+			$.ajax({
+				url:'/articles/focus?page='+focusestPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$("#tab3 .hot-content #section").html(data);
+						focusestPage++;
+					}else{
+						$("#tab3 .readmore").remove();
+					}
 				},
 				error:function(e){
 					console.log(e);
