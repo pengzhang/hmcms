@@ -1,0 +1,26 @@
+<div class="hot-content">
+#{list articles, as:'article'}
+	<div class="item">
+		#{if article.cover}
+		<div class="item-img">
+			<a href="/article?id=${article.id}">
+				<img src="${article.cover}" />
+			</a>
+		</div>
+		#{/if}
+		<div class="item-content">
+			<div class="item-heading"><a href="/article?id=${article.id}">${article.title}</a></div>
+			<div class="item-tag">
+				#{list article.tags, as:'tag'}
+				<span class="tag">${tag.tag}</span>
+				#{/list}
+				<span class="time">${article.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
+			</div>
+			<div class="item-nr">
+				${article.content.htmlText().cutString(150)}
+			</div>
+		</div>
+	</div>
+#{/list}
+<div class="readmore"><a href="/articles/hot?page=${page+1}&size=${size}">加载更多 <i class="icon-chevron-down"></i></a></div>
+</div>

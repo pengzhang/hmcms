@@ -1,0 +1,141 @@
+#{extends '/hmcms/layout/cms.html' /}
+
+<div id="main">
+	<div class="row">
+		<div class="col-md-8">
+			#{if article_recommends}
+			<div id="carousel">
+				<div id="mycarousel" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						<li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+						<li data-target="#mycarousel" data-slide-to="1" class=""></li>
+						<li data-target="#mycarousel" data-slide-to="2" class=""></li>
+					</ol>
+					<div class="carousel-inner">
+						#{list article_recommends, as:'recommend'}
+						<div class="item active">
+							<img alt="${recommend.title}" src="${recommend.cover}">
+							<div class="carousel-caption">
+								<h3>${recommend.title}</h3>
+							</div>
+						</div>
+						#{/list}
+					</div>
+					<a class="left carousel-control" href="#mycarousel" data-slide="prev">
+						<span class="icon icon-chevron-left"></span>
+					</a>
+					<a class="right carousel-control" href="#mycarousel" data-slide="next">
+						<span class="icon icon-chevron-right"></span>
+					</a>
+				</div>
+			</div>
+			#{/if}
+			<div id="hotnews">
+				<div class="hot-header">
+					<ul class="nav nav-pills pull-right">
+						<li class="active">
+							<a href="#tab1" id="tab1_btn" data-toggle="tab">最新</a>
+						</li>
+						<li>
+							<a href="#tab2" id="tab2_btn" data-toggle="tab">最热</a>
+						</li>
+						<li>
+							<a href="#tab3" id="tab3_btn" data-toggle="tab">焦点</a>
+						</li>
+					</ul>
+					<b>文章列表</b>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane in active" id="tab1">
+						<div class="hot-content">
+							#{list articles, as:'article'}
+							<div class="item">
+								#{if article.cover}
+								<div class="item-img">
+									<a href="/article?id=${article.id}">
+										<img src="${article.cover}" />
+									</a>
+								</div>
+								#{/if}
+								<div class="item-content">
+									<div class="item-heading"><a href="/article?id=${article.id}">${article.title}</a></div>
+									<div class="item-tag">
+										#{list article.tags, as:'tag'}
+										<span class="tag">${tag.tag}</span>
+										#{/list}
+										<span class="time">${article.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
+									</div>
+									<div class="item-nr">
+										${article.content.htmlText().cutString(150)}
+									</div>
+								</div>
+							</div>
+							#{/list}
+							<div class="readmore"><a href="/articles?page=${page+1}&size=${size}">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab2">
+					</div>
+					<div class="tab-pane" id="tab3">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="widget widget2 hidden-xs">
+				<a href="javascript:;">
+					<strong class="bg-primary">官方公告</strong>
+					<h2 class="text-primary">这是一个测试公告</h2>
+					<p class="text-muted">这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告这是一个测试公告...</p>
+				</a>
+			</div>
+			<div class="bqy hidden-xs">
+				<h2>标签云</h2>
+				<ul class="bqnav">
+					<li><a href="#">前端技巧(20)</a></li>
+					<li><a href="#">兼容(16)</a></li>
+					<li><a href="#">企业公司(35)</a></li>
+					<li><a href="#">前端技巧(20)</a></li>
+					<li><a href="#">兼容(16)</a></li>
+					<li><a href="#">企业公司(35)</a></li>
+					<li><a href="#">前端技巧(20)</a></li>
+					<li><a href="#">兼容(16)</a></li>
+					<li><a href="#">企业公司(35)</a></li>
+					<li><a href="#">前端技巧(20)</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+#{set 'js'}
+<script>
+	$(function(){
+		$("#tab2_btn").click(function(){
+			$.ajax({
+				url:'/articles/hot',
+				type:'get',
+				success:function(data){
+					$("#tab2").html(data);
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		
+		$("#tab3_btn").click(function(){
+			$.ajax({
+				url:'/articles/focus',
+				type:'get',
+				success:function(data){
+					$("#tab3").html(data);
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+	})
+</script>
+#{/set}

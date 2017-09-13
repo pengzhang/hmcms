@@ -24,11 +24,10 @@ import play.data.validation.MaxSize;
  *
  */
 @Entity
-@Table(name="video")
-@org.hibernate.annotations.Table(comment = "视频管理", appliesTo = "video")
+@Table(name="cms_video")
+@org.hibernate.annotations.Table(comment = "视频管理", appliesTo = "cms_video")
 public class Video extends CmsModel implements Serializable {
 	
-	//文章部分
 	@Column(columnDefinition = "varchar(500) comment '视频标题'")
 	public String title;
 	
@@ -56,6 +55,12 @@ public class Video extends CmsModel implements Serializable {
 	
 	@ManyToMany(cascade=CascadeType.REFRESH)
 	public List<Category> categories = new ArrayList<>();
+	
+	@ManyToMany(cascade=CascadeType.REMOVE)
+	public List<Comment> comments = new ArrayList<>();
+	
+	@ManyToMany(cascade=CascadeType.REFRESH)
+	public List<Tag> tags = new ArrayList<>();
 
 	public Video() {
 		super();

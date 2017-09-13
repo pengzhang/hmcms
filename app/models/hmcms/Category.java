@@ -9,8 +9,8 @@ import javax.persistence.Table;
 import models.BaseModel;
 
 @Entity
-@Table(name="category")
-@org.hibernate.annotations.Table(comment = "分类(社群,专题)管理", appliesTo = "category")
+@Table(name="cms_category")
+@org.hibernate.annotations.Table(comment = "分类(社群,专题)管理", appliesTo = "cms_category")
 public class Category extends BaseModel {
 	
 	@OneToOne

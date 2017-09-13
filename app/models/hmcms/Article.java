@@ -22,8 +22,8 @@ import play.data.validation.MaxSize;
  *
  */
 @Entity
-@Table(name="article")
-@org.hibernate.annotations.Table(comment = "文章管理", appliesTo = "article")
+@Table(name="cms_article")
+@org.hibernate.annotations.Table(comment = "文章管理", appliesTo = "cms_article")
 public class Article extends CmsModel implements Serializable {
 
 	//文章部分
@@ -45,6 +45,12 @@ public class Article extends CmsModel implements Serializable {
 	
 	@ManyToMany(cascade=CascadeType.REFRESH)
 	public List<Category> categories = new ArrayList<>();
+	
+	@ManyToMany(cascade=CascadeType.PERSIST)
+	public List<Comment> comments = new ArrayList<>();
+	
+	@ManyToMany(cascade=CascadeType.PERSIST)
+	public List<Tag> tags = new ArrayList<>();
 	
 	public Article() {
 		super();

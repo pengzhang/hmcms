@@ -2,39 +2,92 @@ package controllers.hmcms;
 
 import java.util.List;
 
-import annotations.Api;
-import annotations.Api.HttpType;
-import annotations.Param;
-import annotations.Return;
+import com.qiniu.util.Json;
+
 import controllers.ActionIntercepter;
 import models.hmcms.Article;
+import models.hmcms.Tag;
+import models.hmcms.enumtype.Quality;
+import models.hmcms.enumtype.Recommend;
+import play.Logger;
+import play.cache.Cache;
+import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.With;
 import plugins.router.Get;
-import plugins.router.Gets;
 
 @With({ActionIntercepter.class})
 public class ArticleController extends Controller {
-	
-	@Api(name="获取文章列表", param= {@Param(clazz=int.class,name="page"),@Param(clazz=int.class,name="size")}, type = HttpType.GET, url = "/articles.json|xml", ret= {@Return(clazz=Article.class)})
-	@Gets({@Get("/articles"),@Get("/articles.{format}")})
+
+	@Get("/articles")
 	public static void articleList(int page, int size) {
-		
-		List<Article> articles = Article.all().fetch(page, size);
-		renderArgs.put("status", true);
-		renderArgs.put("message", "获取文章信息成功");
-		renderArgs.put("data", articles);
-		
+		List<Article> articles = Article.find("order by createDate desc").fetch(page, size);
+		Logger.info("articles %s", Json.encode(articles));
+		render(articles,page,size);
+	}
+
+	@Get("/article")
+	public static void article(long id) {
+		Article article = Article.findById(id);
+		render(article);
 	}
 	
-	@Api(name="根据分类获取文章列表", param= {@Param(clazz=long.class,name="categoryId"),@Param(clazz=int.class,name="page"),@Param(clazz=int.class,name="size")}, type = HttpType.GET, url = "/articles/by/category.json|xml", ret= {@Return(clazz=Article.class)})
-	@Gets({@Get("/articles/by/category"),@Get("/articles/by/category.{format}")})
+	@Get("/articles/hot")
+	public static void articleByHot(int page, int size) {
+		List<Article> articles = Article.find("select a from Article a left join a.comments c group by a.id order by count(c.id) desc, a.createDate desc").fetch(page, size);
+		render("/hmcms/ArticleController/sectionArticles.html",articles, page, size);
+	}
+	
+	@Get("/articles/focus")
+	public static void articleByFocus(int page, int size) {
+		List<Article> articles = Article.find("recommend=? and quality=? order by createDate desc", Recommend.recommend, Quality.quality).fetch(page, size);
+		render("/hmcms/ArticleController/sectionArticles.html",articles, page, size);
+	}
+
+	@Get("/articles/by/category")
 	public static void articleByCategoryList(long categoryId, int page, int size) {
+		List<Article> articles = Article.find("select a from Article a left join a.categories c where c.id=?", categoryId).fetch(page, size);
+		render(articles, categoryId, page, size);
+	}
+
+	@Get("/articles/by/tag")
+	public static void articleByTagList(long tagId, int page, int size) {
+		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=?", tagId).fetch(page, size);
+		render(articles, tagId, page, size);
+	}
+	
+	@Before
+	public static void page() {
+		String page = request.params.get("page");
+		if(page == null) {
+			request.params.put("page", "1");
+		}else if(Integer.parseInt(page) < 1) {
+			request.params.put("page", "1");
+		}
 		
-		List<Article> articles = Article.find("from Article a left join a.categories c where c.id=?", categoryId).fetch(page, size);
-		renderArgs.put("status", true);
-		renderArgs.put("message", "获取文章信息成功");
-		renderArgs.put("data", articles);
+		String size = request.params.get("size");
+		if(size == null) {
+			request.params.put("size", "10");
+		}
+	}
+	
+	@Before()
+	private static void getTags(){
+		List<Tag> tags = (List<Tag>) Cache.get("article_tags");
+		if(tags == null) {
+			tags = Tag.find("select t from Article a left join a.tags as t group by t.tag order by t.createDate desc").fetch(10);
+			Cache.set("article_tags", tags);
+		}
+		renderArgs.put("article_tags", tags);
+	}
+	
+	@Before(unless="article")
+	private static void getRecommendArticles(){
+		List<Article> recommendArticles = (List<Article>) Cache.get("article_recommends"); 
+		if(recommendArticles == null) {
+			recommendArticles = Article.find("recommend=? order by createDate desc", Recommend.recommend).fetch(3);
+		}
+		renderArgs.put("article_recommends", recommendArticles);
 	}
 
 }
