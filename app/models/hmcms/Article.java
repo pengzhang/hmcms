@@ -13,6 +13,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Persister;
+
 import annotations.Exclude;
 import annotations.Upload;
 import models.hmcms.enumtype.Open;
@@ -46,14 +53,20 @@ public class Article extends CmsModel implements Serializable {
 	public Open open = Open.common;
 	
 	@ManyToMany(cascade=CascadeType.REFRESH)
+	@OrderBy("createDate desc")
+	@LazyCollection(value=LazyCollectionOption.EXTRA)
 	public List<Category> categories = new ArrayList<>();
 	
 	@Exclude
 	@ManyToMany(cascade=CascadeType.PERSIST)
 	@OrderBy("createDate desc")
+	@BatchSize(size=15)
+	@LazyCollection(value=LazyCollectionOption.EXTRA)
 	public List<Comment> comments = new ArrayList<>();
 	
 	@ManyToMany(cascade=CascadeType.PERSIST)
+	@OrderBy("createDate desc")
+	@LazyCollection(value=LazyCollectionOption.EXTRA)
 	public List<Tag> tags = new ArrayList<>();
 	
 	public Article() {

@@ -6,11 +6,13 @@ import org.apache.commons.lang.StringUtils;
 
 import controllers.ActionIntercepter;
 import models.hmcms.Article;
+import models.hmcms.Comment;
 import models.hmcms.Tag;
 import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
 import models.hmcore.common.ResponseData;
 import play.cache.Cache;
+import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -21,7 +23,8 @@ public class ArticleController extends Controller {
 	
 	@Get("/article")
 	public static void article(long id) {
-		Article article = Article.find("id=?", id).first();
+		System.out.println("==============================================================");
+		Article article = Article.findById(id);
 		article.view_total += 1;
 		article.save();
 		render(article);
@@ -29,7 +32,7 @@ public class ArticleController extends Controller {
 	
 	@Get("/article/like")
 	public static void articleLike(long id) {
-		if(StringUtils.isEmpty(session.get("uid"))) {
+		if(StringUtils.isNotEmpty(session.get("uid"))) {
 			Article article = Article.findById(id);
 			article.like_total += 1;
 			article.save();
