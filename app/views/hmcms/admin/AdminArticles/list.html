@@ -12,7 +12,7 @@
 			    </div>
 			
 			    <div id="crudListTable">
-			        #{crud.table fields:['id', 'title','cover', 'recommend','open','quality','author','createDate', 'updateDate']}
+			        #{crud.table fields:['id', 'title','cover', 'recommend','open','quality','author','view_total','comment_total','like_total','createDate', 'updateDate']}
 			         #{crud.custom 'cover'}
 				        	<img src="${object.cover}" width="100" height="100" />
 				     #{/crud.custom}

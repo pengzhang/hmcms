@@ -1,13 +1,15 @@
 package controllers.hmcms;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import controllers.ActionIntercepter;
 import models.hmcms.Article;
 import models.hmcms.Tag;
 import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
+import models.hmcore.common.ResponseData;
 import play.cache.Cache;
 import play.mvc.Before;
 import play.mvc.Controller;
@@ -23,6 +25,18 @@ public class ArticleController extends Controller {
 		article.view_total += 1;
 		article.save();
 		render(article);
+	}
+	
+	@Get("/article/like")
+	public static void articleLike(long id) {
+		if(StringUtils.isEmpty(session.get("uid"))) {
+			Article article = Article.findById(id);
+			article.like_total += 1;
+			article.save();
+			renderJSON(ResponseData.response(true, "点赞成功"));
+		}else {
+			renderJSON(ResponseData.response(false, "请登录后点赞"));
+		}
 	}
 
 	@Get("/articles")
