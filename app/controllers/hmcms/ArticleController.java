@@ -21,7 +21,7 @@ public class ArticleController extends Controller {
 	
 	@Get("/article")
 	public static void article(long id) {
-		Article article = Article.findById(id);
+		Article article = Article.find("id=?", id).first();
 		article.view_total += 1;
 		article.save();
 		render(article);
@@ -41,7 +41,7 @@ public class ArticleController extends Controller {
 
 	@Get("/articles")
 	public static void articleList(int page, int size, int ajax) {
-		List<Article> articles = Article.find("status=? order by createDate desc",false).fetch(page, size);
+		List<Article> articles = Article.find("status=? order by updateDate desc",false).fetch(page, size);
 		if(ajax == 1) {
 			render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
 		}
@@ -50,14 +50,14 @@ public class ArticleController extends Controller {
 	
 	@Get("/articles/hot")
 	public static void articleByHot(int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.createDate desc",false).fetch(page, size);
+		List<Article> articles = Article.find("select a from Article a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.updateDate desc",false).fetch(page, size);
 		page = page + 2;
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 	
 	@Get("/articles/focus")
 	public static void articleByFocus(int page, int size) {
-		List<Article> articles = Article.find("recommend=? and quality=? and status=? order by createDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
+		List<Article> articles = Article.find("recommend=? and quality=? and status=? order by updateDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 
@@ -70,7 +70,7 @@ public class ArticleController extends Controller {
 	@Get("/articles/by/tag")
 	public static void articleByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);
-		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=? and a.status=?", tagId, false).fetch(page, size);
+		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=? and a.status=? order by a.updateDate desc", tagId, false).fetch(page, size);
 		if(ajax == 1) {
 			render("/hmcms/ArticleController/sectionArticles.html", articles, tagId, tag, page, size);
 		}
@@ -107,7 +107,7 @@ public class ArticleController extends Controller {
 		renderArgs.put("article_tags", tags);
 	}
 	
-	@Before(only="article")
+	@Before(only= {"article","articleList"})
 	private static void getRecommendArticles(){
 		List<Article> recommendArticles = (List<Article>) Cache.get("article_recommends"); 
 		if(recommendArticles == null) {

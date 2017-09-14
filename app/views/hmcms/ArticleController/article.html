@@ -43,10 +43,16 @@
 				type:'get',
 				success:function(data){
 					if(data.status){
-						new $.zui.Messager('点赞成功', {
+						new $.zui.Messager(data.message, {
 					        icon: 'icon-thumbs-o-up',
 					        placement:'bottom',
 					        type:'success'
+					    }).show();
+					}else{
+						new $.zui.Messager(data.message, {
+					        icon: 'icon-thumbs-o-up',
+					        placement:'bottom',
+					        type:'danger'
 					    }).show();
 					}
 				},

@@ -10,8 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import annotations.Exclude;
 import annotations.Upload;
 import models.hmcms.enumtype.Open;
 import play.data.validation.MaxSize;
@@ -46,7 +48,9 @@ public class Article extends CmsModel implements Serializable {
 	@ManyToMany(cascade=CascadeType.REFRESH)
 	public List<Category> categories = new ArrayList<>();
 	
+	@Exclude
 	@ManyToMany(cascade=CascadeType.PERSIST)
+	@OrderBy("createDate desc")
 	public List<Comment> comments = new ArrayList<>();
 	
 	@ManyToMany(cascade=CascadeType.PERSIST)

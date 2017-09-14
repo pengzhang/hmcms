@@ -12,13 +12,15 @@
 						<li data-target="#mycarousel" data-slide-to="2" class=""></li>
 					</ol>
 					<div class="carousel-inner">
+					    %{ def f = 0}%
 						#{list article_recommends, as:'recommend'}
-						<div class="item active">
+						<div class="item #{if f==0}active#{/if}">
 							<img alt="${recommend.title}" src="${recommend.cover}">
 							<div class="carousel-caption">
 								<h3>${recommend.title}</h3>
 							</div>
 						</div>
+						%{f++}%
 						#{/list}
 					</div>
 					<a class="left carousel-control" href="#mycarousel" data-slide="prev">
