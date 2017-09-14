@@ -23,12 +23,4 @@ public class CommentController extends Controller {
 		render("/hmcms/ArticleController/sectionComment.html",comment);
 	}
 	
-	
-	@Before
-	public static void devDefaultUser() {
-		if(Play.mode.isDev()) {
-			session.put("uid", 1);
-		}
-	}
-
 }
