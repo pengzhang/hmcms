@@ -1,8 +1,8 @@
 package controllers.hmcms;
 
-import play.mvc.Controller;
+import controllers.BaseController;
 
-public class VideoController extends Controller {
+public class VideoController extends BaseController {
 	
 	
 

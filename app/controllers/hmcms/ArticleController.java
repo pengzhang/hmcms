@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import controllers.ActionIntercepter;
+import controllers.BaseController;
 import models.hmcms.Article;
 import models.hmcms.Comment;
 import models.hmcms.Tag;
@@ -12,26 +13,24 @@ import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
 import models.hmcore.common.ResponseData;
 import play.cache.Cache;
-import play.db.jpa.JPA;
 import play.mvc.Before;
-import play.mvc.Controller;
 import play.mvc.With;
 import plugins.router.Get;
+import plugins.router.Post;
 
 @With({ActionIntercepter.class})
-public class ArticleController extends Controller {
+public class ArticleController extends BaseController {
 	
 	@Get("/article")
 	public static void article(long id) {
-		System.out.println("==============================================================");
 		Article article = Article.findById(id);
-		article.view_total += 1;
-		article.save();
+		article.addView();
 		render(article);
 	}
 	
 	@Get("/article/like")
 	public static void articleLike(long id) {
+		//TODO 关联点赞表
 		if(StringUtils.isNotEmpty(session.get("uid"))) {
 			Article article = Article.findById(id);
 			article.like_total += 1;
@@ -40,6 +39,13 @@ public class ArticleController extends Controller {
 		}else {
 			renderJSON(ResponseData.response(false, "请登录后点赞"));
 		}
+	}
+	
+	@Post("/add/comment")
+	public static void addComment(long id, Comment comment) {
+		Article article = Article.findById(id);
+		comment = article.addComment(comment,currentUser());
+		render("/hmcms/ArticleController/sectionComment.html",comment);
 	}
 
 	@Get("/articles")

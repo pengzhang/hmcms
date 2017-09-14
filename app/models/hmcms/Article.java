@@ -10,20 +10,18 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Persister;
 
 import annotations.Exclude;
 import annotations.Upload;
 import models.hmcms.enumtype.Open;
+import models.hmcore.user.User;
 import play.data.validation.MaxSize;
+import play.db.jpa.JPA;
 
 /**
  * 文章
@@ -53,24 +51,31 @@ public class Article extends CmsModel implements Serializable {
 	public Open open = Open.common;
 	
 	@ManyToMany(cascade=CascadeType.REFRESH)
-	@OrderBy("createDate desc")
-	@LazyCollection(value=LazyCollectionOption.EXTRA)
 	public List<Category> categories = new ArrayList<>();
 	
 	@Exclude
-	@ManyToMany(cascade=CascadeType.PERSIST)
-	@OrderBy("createDate desc")
-	@BatchSize(size=15)
-	@LazyCollection(value=LazyCollectionOption.EXTRA)
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="article")
+	@LazyCollection(value = LazyCollectionOption.EXTRA)
 	public List<Comment> comments = new ArrayList<>();
 	
-	@ManyToMany(cascade=CascadeType.PERSIST)
-	@OrderBy("createDate desc")
-	@LazyCollection(value=LazyCollectionOption.EXTRA)
+	@ManyToMany(cascade=CascadeType.ALL)
 	public List<Tag> tags = new ArrayList<>();
 	
 	public Article() {
 		super();
+	}
+	
+	public Comment addComment(Comment comment, User user){
+		comment.add(this, user);
+		return comment;
+	}
+	
+	public void addView(){
+		JPA.em().createQuery("update Article a set a.view_total=:total where a.id=:id").setParameter("total", ++this.view_total).setParameter("id", this.id).executeUpdate();
+	}
+	
+	public List<Comment> getComments(long id, int page, int size){
+		return Comment.find("select c from Article a left join a.comments c where a.id=? order by c.createDate desc", id).fetch(page, size);
 	}
 
 	@Override

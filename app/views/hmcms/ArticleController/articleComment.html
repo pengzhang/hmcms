@@ -1,7 +1,7 @@
 <div id="question-reply">
-	<div class="form-title" style="margin:10px 0;">评论数(${article.comment_total})</div>
+	<div class="form-title" style="margin:10px 0;">评论数(${article.comments.size()})</div>
 	<ul class="reply-list">
-		#{list article.comments, as:'comment'}
+		#{list article.getComments(article.id, 1, 5), as:'comment'}
 			#{include '/hmcms/ArticleController/sectionComment.html' /}
 		#{/list}
 	</ul>
@@ -38,7 +38,7 @@
 		$("#send_comment").click(function(){
 			var content = $("#content").val();
 			$.ajax({
-				url:'/create/comment?articleId=${article.id}',
+				url:'/add/comment?id=${article.id}',
 				type:'post',
 				data:{'comment.comment':content},
 				success:function(data){

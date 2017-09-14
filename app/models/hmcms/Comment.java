@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,6 +32,17 @@ public class Comment extends BaseModel implements Serializable{
 	@OneToOne
 	@JoinColumn(name="user_id", columnDefinition="bigint default 0 comment '评论用户'")
 	public User user;
+	
+	@ManyToOne
+	@JoinTable(name="cms_article_comment", joinColumns=@JoinColumn(name = "comment_id"), inverseJoinColumns=@JoinColumn(name = "article_id"))
+	public Article article;
+	
+	public Comment add(Article article, User user){
+		this.article = article;
+		this.user = user;
+		create();
+		return this;
+	}
 
 	@Override
 	public String toString() {

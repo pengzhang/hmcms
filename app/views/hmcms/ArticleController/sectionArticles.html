@@ -10,9 +10,6 @@
 	<div class="item-content">
 		<div class="item-heading"><a href="/article?id=${article.id}">${article.title}</a></div>
 		<div class="item-tag">
-			#{list article.tags, as:'tag'}
-			<span class="tag">${tag.tag}</span>
-			#{/list}
 			<span class="time">${article.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
 		</div>
 		<div class="item-nr">
