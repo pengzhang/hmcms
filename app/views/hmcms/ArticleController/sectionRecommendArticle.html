@@ -1,0 +1,16 @@
+<div id="tjyd">
+	<h3>推荐阅读</h3>
+	<ul class="tjlist">
+		#{list article_recommends, as:'article'}
+		#{if article}
+		<li>
+			<a href="/article?id=${article.id}">
+				<h5>${article.title.cutString(17)}</h5>
+				<img src="${article.cover}" />
+				<p>${article.content.htmlText().cutString(50)}</p>
+			</a>
+		</li>
+		#{/if}
+		#{/list}
+	</ul>
+</div>

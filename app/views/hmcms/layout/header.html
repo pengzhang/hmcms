@@ -8,7 +8,7 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a href="#" class="navbar-logo">
-				<img src="img/logo.png" />
+				<img src="/public/hmcms/images/logo.png" height="60" />
 			</a>
 			<div class="pull-right navbar-user visible-xs">
 				<a href="javascript:;" class="login"><i class="icon-user" style="font-size: 20px;"></i></a>
@@ -16,14 +16,14 @@
 		</div>
 		<nav class="collapse navbar-collapse" id="navbar-nav">
 			<ul class="nav navbar-nav">
-				<li class="active">
-					<a href="#">网站首页</a>
+				<li class="#{if nav=='index'}active#{/if}">
+					<a href="/">网站首页</a>
+				</li>
+				<li class="#{if nav=='article'}active#{/if}">
+					<a href="/articles">新闻资讯</a>
 				</li>
 				<li>
-					<a href="article.html">新闻资讯</a>
-				</li>
-				<li>
-					<a href="question.html">问答社区</a>
+					<a href="">问答社区</a>
 				</li>
 				<li>
 					<a href="#">社会万象</a>

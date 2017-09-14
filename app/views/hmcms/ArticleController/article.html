@@ -1,0 +1,122 @@
+#{extends '/hmcms/layout/cms.html' /}
+
+<div id="main">
+	<div class="row">
+		<div class="col-md-9">
+			<div id="article-content">
+				<div class="art-heading">
+					<h2>${article.title}</h2>
+					<p class="art-about">
+						${article.createDate.format('yyyy-MM-dd HH:mm:ss')}
+						<span class="pipe">|</span>
+						发布者: <a href="#">${article.author}</a>
+						<span class="pipe">|</span>
+						查看：${article.view_total}
+						<span class="pipe">|</span>
+						评论: ${article.comment_total}
+					</p>
+				</div>
+				<div class="art-body">
+					${article.content.raw()}
+				</div>
+				<div class="art-foot">
+					<div class="zs">
+						<button type="button" class="zsbtn bg-primary" title="赞"><i class="icon-thumbs-o-up"></i></button>
+						<button type="button" class="zsbtn bg-danger" title="打赏">赏</button>
+						<button type="button" class="zsbtn bg-special" title="分享"><i class="icon-link"></i></button>
+					</div>
+				</div>
+			</div>
+			<div id="question-reply">
+				<div class="form-title" style="margin:10px 0;">评论数（3）</div>
+				<ul class="reply-list">
+					<li>
+						<div class="qust-about">
+							<a href="#" class="user-img">
+								<img src="img/tx/100.jpg" />
+							</a>
+							<div class="user-info">
+								<a href="#">大豆比</a>
+								<p>发布于7小时前</p>
+							</div>
+						</div>
+						<div class="qust-rbody">
+							我去，提交和编辑都要回答问题~~真够创新的，没点基础就懵逼了！
+						</div>
+						<div class="qust-rfoot">
+							<a href="javascript:;"><i class="icon-thumbs-o-up"></i> 1</a>
+							<a href="javascript:;" id="reply"><i class="icon-chat-dot"></i> 回复</a>
+						</div>
+					</li>
+					<li>
+						<div class="qust-about">
+							<a href="#" class="user-img">
+								<img src="img/tx/100.jpg" />
+							</a>
+							<div class="user-info">
+								<a href="#">大豆比2</a>
+								<p>发布于7小时前</p>
+							</div>
+						</div>
+						<div class="qust-rbody">
+							我去，提交和编辑都要回答问题~~真够创新的，没点基础就懵逼了！
+						</div>
+						<div class="qust-rfoot">
+							<a href="javascript:;"><i class="icon-thumbs-o-up"></i> 1</a>
+							<a href="javascript:;" id="reply"><i class="icon-chat-dot"></i> 回复</a>
+						</div>
+					</li>
+					<li>
+						<div class="qust-about">
+							<a href="#" class="user-img">
+								<img src="img/tx/100.jpg" />
+							</a>
+							<div class="user-info">
+								<a href="#">大豆比3</a>
+								<p>发布于7小时前</p>
+							</div>
+						</div>
+						<div class="qust-rbody">
+							什么浏览器
+							<br />代码怎么写的
+							<br />贴全了
+						</div>
+						<div class="qust-rfoot">
+							<a href="javascript:;"><i class="icon-thumbs-o-up"></i> 1</a>
+							<a href="javascript:;" id="reply"><i class="icon-chat-dot"></i> 回复</a>
+						</div>
+					</li>
+				</ul>
+				<div class="reply-form">
+					<form action="#" method="post">
+						<div class="form-group">
+							<div class="editbox">
+								<div class="editmenu">
+									<a href="javascript:;" title="图片" id="edit-image">
+										<i class="icon-file-image"></i> 图片
+									</a>
+									<a href="javascript:;" title="表情" id="edit-smile">
+										<i class="icon-smile"></i> 表情
+									</a>
+									<a href="javascript:;" title="全屏" id="edit-expand">
+										<i class="icon-expand-full"></i> 全屏
+									</a>
+									<a href="javascript:;" title="预览" id="edit-show">
+										<i class="icon-check-circle"></i> 预览
+									</a>
+								</div>
+								<textarea class="form-control" rows="6" name="content" id="content" placeholder="说点什么吧！"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<button type="button" class="btn btn-primary">我要评论</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			#{include '/hmcms/ArticleController/sectionRecommendArticle.html' /}
+		</div>
+	</div>
+</div>

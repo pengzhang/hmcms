@@ -54,7 +54,7 @@ a,a:hover,a:after,a:focus{
 		display: none;
 	}
 	.navbar-logo img{
-		height: 40px;
+		height: 60px;
 	}
 }
 @media (min-width:768px) {
@@ -271,7 +271,7 @@ a,a:hover,a:after,a:focus{
 }
 .bqy .bqnav li{
 	float: left;
-	width: 50%;
+	width: 25%;
 	text-align: center;
 	margin-bottom: 10px;
 	padding:0 5px;
@@ -505,10 +505,11 @@ footer p{
 }
 .art-body p{
 	font-size: 16px;
-	margin-bottom: 20px;
-	text-indent: 2em;
+	margin-bottom: 0px;
+	padding:10px;
 }
-.art-body .art-img{
+.art-body img{
+	width:100%;
 	margin-bottom: 20px;
 }
 .art-foot{

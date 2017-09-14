@@ -1,15 +1,13 @@
 package controllers.hmcms;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.qiniu.util.Json;
 
 import controllers.ActionIntercepter;
 import models.hmcms.Article;
 import models.hmcms.Tag;
 import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
-import play.Logger;
 import play.cache.Cache;
 import play.mvc.Before;
 import play.mvc.Controller;
@@ -22,19 +20,18 @@ public class ArticleController extends Controller {
 	@Get("/article")
 	public static void article(long id) {
 		Article article = Article.findById(id);
+		article.view_total += 1;
+		article.save();
 		render(article);
 	}
 
 	@Get("/articles")
-	public static void articleList(int page, int size) {
+	public static void articleList(int page, int size, int ajax) {
 		List<Article> articles = Article.find("status=? order by createDate desc",false).fetch(page, size);
+		if(ajax == 1) {
+			render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
+		}
 		render(articles,page,size);
-	}
-	
-	@Get("/articles/new")
-	public static void articleByNew(int page, int size) {
-		List<Article> articles = Article.find("status=? order by createDate desc",false).fetch(page, size);
-		render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
 	}
 	
 	@Get("/articles/hot")
@@ -57,14 +54,22 @@ public class ArticleController extends Controller {
 	}
 
 	@Get("/articles/by/tag")
-	public static void articleByTagList(long tagId, int page, int size) {
+	public static void articleByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);
 		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=? and a.status=?", tagId, false).fetch(page, size);
+		if(ajax == 1) {
+			render("/hmcms/ArticleController/sectionArticles.html", articles, tagId, tag, page, size);
+		}
 		render(articles, tagId, tag, page, size);
 	}
 	
 	@Before
-	public static void page() {
+	private static void nav() {
+		renderArgs.put("nav", "article");
+	}
+	
+	@Before
+	private static void page() {
 		String page = request.params.get("page");
 		if(page == null) {
 			request.params.put("page", "1");
@@ -88,7 +93,7 @@ public class ArticleController extends Controller {
 		renderArgs.put("article_tags", tags);
 	}
 	
-	@Before(unless="article")
+	@Before(only="article")
 	private static void getRecommendArticles(){
 		List<Article> recommendArticles = (List<Article>) Cache.get("article_recommends"); 
 		if(recommendArticles == null) {
