@@ -74,8 +74,8 @@ public class Article extends CmsModel implements Serializable {
 		JPA.em().createQuery("update Article a set a.view_total=:total where a.id=:id").setParameter("total", ++this.view_total).setParameter("id", this.id).executeUpdate();
 	}
 	
-	public List<Comment> getComments(long id, int page, int size){
-		return Comment.find("select c from Article a left join a.comments c where a.id=? order by c.createDate desc", id).fetch(page, size);
+	public List<Comment> getComments(int page, int size){
+		return Comment.find("select c from Article a left join a.comments c where a.id=? order by c.createDate desc", this.id).fetch(page, size);
 	}
 
 	@Override

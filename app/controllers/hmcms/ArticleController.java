@@ -47,6 +47,14 @@ public class ArticleController extends BaseController {
 		comment = article.addComment(comment,currentUser());
 		render("/hmcms/ArticleController/sectionComment.html",comment);
 	}
+	
+	@Get("/get/comments")
+	public static void getCommentList(long id, int page, int size) {
+		Article article = Article.findById(id);
+		List<Comment> comments = article.getComments(page, size);
+		render("/hmcms/ArticleController/sectionCommentList.html", article, comments, page, size);
+		
+	}
 
 	@Get("/articles")
 	public static void articleList(int page, int size, int ajax) {

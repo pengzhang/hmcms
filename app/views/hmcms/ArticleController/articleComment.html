@@ -1,10 +1,13 @@
 <div id="question-reply">
 	<div class="form-title" style="margin:10px 0;">评论数(${article.comments.size()})</div>
-	<ul class="reply-list">
-		#{list article.getComments(article.id, 1, 5), as:'comment'}
-			#{include '/hmcms/ArticleController/sectionComment.html' /}
-		#{/list}
-	</ul>
+		<ul class="reply-list">
+			#{list article.getComments(1, 10), as:'comment'}
+				#{include '/hmcms/ArticleController/sectionComment.html' /}
+			#{/list}
+		</ul>
+		#{if article.comments.size() > 10}
+		<div class="readmore"><a href="javascript:;" class="focusest">加载更多 <i class="icon-chevron-down"></i></a></div>
+		#{/if}
 	<div class="reply-form">
 		<form action="#" method="post">
 			<div class="form-group">
@@ -49,6 +52,24 @@
 				        placement:'bottom',
 				        type:'success'
 				    }).show();
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		var commentPage = 2;
+		$(".readmore").click(function(){
+			$.ajax({
+				url:'/get/comments?id=${article.id}&size=10&page='+commentPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$(".reply-list").append(data);
+						commentPage++;
+					}else{
+						$(".readmore").remove();
+					}
 				},
 				error:function(e){
 					console.log(e);
