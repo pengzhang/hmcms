@@ -5,7 +5,32 @@
 			<li><a href="javascript:;" class="register"><span class="text-primary">我要注册</span></a></li>
 			<li><a href="#">找回密码</a></li>
 		</ul>
-		<a href="#">设为首页</a>
-		<a href="#">收藏本站</a>
+		<a  href='#' onClick="this.style.behavior='url(#default#homepage)';this.setHomePage('http://www.cnenvs.com');">设为首页</a>
+		<a target=_top href="javascript:window.external.addFavorite('http://www.cnenvs.com','中环保网');">收藏本站</a>
+		
 	</div>
 </div>
+#{set 'topScripts'}
+<script type="text/javascript">
+	$('.login').on('click', function() {
+		layer.open({
+			type: 2,
+			title: '用户登录',
+			shadeClose: true,
+			shade: 0.8,
+			area: ['480px', '30%'],
+			content: '/user/mini/login'
+		})
+	});
+	$('.register').on('click', function() {
+		layer.open({
+			type: 2,
+			title: '用户注册',
+			shadeClose: true,
+			shade: 0.8,
+			area: ['480px', '55%'],
+			content: '/user/mini/register'
+		})
+	});
+</script>
+#{/set}
