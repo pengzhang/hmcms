@@ -66,7 +66,7 @@ public class Article extends CmsModel implements Serializable {
 	}
 	
 	public Comment addComment(Comment comment, User user){
-		comment.add(this, user);
+		comment.addArticleComment(this, user);
 		return comment;
 	}
 	

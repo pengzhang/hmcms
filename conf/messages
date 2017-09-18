@@ -29,3 +29,7 @@ video_url=视频链接
 vtype=视频播放类型
 tryout_time=试播时长
 v_seq=视频展示顺序
+
+#Relations
+categories=分类
+tags=标签

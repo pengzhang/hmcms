@@ -9,14 +9,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import annotations.Exclude;
 import annotations.Upload;
 import models.hmcms.enumtype.VideoType;
+import models.hmcore.user.User;
 import play.data.validation.MaxSize;
+import play.db.jpa.JPA;
 
 /**
  * 视频
@@ -56,7 +61,9 @@ public class Video extends CmsModel implements Serializable {
 	@ManyToMany(cascade=CascadeType.REFRESH)
 	public List<Category> categories = new ArrayList<>();
 	
-	@ManyToMany(cascade=CascadeType.REMOVE)
+	@Exclude
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="video")
+	@LazyCollection(value = LazyCollectionOption.EXTRA)
 	public List<Comment> comments = new ArrayList<>();
 	
 	@ManyToMany(cascade=CascadeType.REFRESH)
@@ -64,6 +71,19 @@ public class Video extends CmsModel implements Serializable {
 
 	public Video() {
 		super();
+	}
+	
+	public Comment addComment(Comment comment, User user){
+		comment.addVideoComment(this, user);
+		return comment;
+	}
+	
+	public void addView(){
+		JPA.em().createQuery("update Video a set a.view_total=:total where a.id=:id").setParameter("total", ++this.view_total).setParameter("id", this.id).executeUpdate();
+	}
+	
+	public List<Comment> getComments(int page, int size){
+		return Comment.find("select c from Video a left join a.comments c where a.id=? order by c.createDate desc", this.id).fetch(page, size);
 	}
 
 	@Override

@@ -1,0 +1,20 @@
+#{list videos, as:'video'}
+<div class="item">
+	#{if video.cover}
+	<div class="item-img">
+		<a href="/video?id=${video.id}">
+			<img src="${video.cover}" />
+		</a>
+	</div>
+	#{/if}
+	<div class="item-content">
+		<div class="item-heading"><a href="/video?id=${video.id}">${video.title}</a></div>
+		<div class="item-tag">
+			<span class="time">${video.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
+		</div>
+		<div class="item-nr">
+			${video.video_desc.htmlText().cutString(150)}
+		</div>
+	</div>
+</div>
+#{/list}

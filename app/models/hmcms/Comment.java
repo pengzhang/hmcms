@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.BatchSize;
 
 import models.BaseModel;
@@ -37,8 +38,19 @@ public class Comment extends BaseModel implements Serializable{
 	@JoinTable(name="cms_article_comment", joinColumns=@JoinColumn(name = "comment_id"), inverseJoinColumns=@JoinColumn(name = "article_id"))
 	public Article article;
 	
-	public Comment add(Article article, User user){
+	@ManyToOne
+	@JoinTable(name="cms_video_comment", joinColumns=@JoinColumn(name = "comment_id"), inverseJoinColumns=@JoinColumn(name = "video_id"))
+	public Video video;
+	
+	public Comment addArticleComment(Article article, User user){
 		this.article = article;
+		this.user = user;
+		create();
+		return this;
+	}
+	
+	public Comment addVideoComment(Video video, User user){
+		this.video = video;
 		this.user = user;
 		create();
 		return this;
@@ -46,7 +58,7 @@ public class Comment extends BaseModel implements Serializable{
 
 	@Override
 	public String toString() {
-		return "评论";
+		return StringUtils.substring(comment, 0, 10);
 	}
 	
 	
