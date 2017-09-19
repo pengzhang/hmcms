@@ -686,3 +686,9 @@ footer p{
 	height: 150px;
 	margin:20px 0 10px 0;
 }
+.video-heading{
+	padding-bottom: 0px;
+}
+.video-content{
+	padding-bottom: 0px;
+}

@@ -5,9 +5,10 @@
 		#{if video}
 		<li>
 			<a href="/video?id=${video.id}">
-				<h5>${video.title.cutString(17)}</h5>
+				
 				<img src="${video.cover}" />
-				<p>${video.content.htmlText().cutString(50)}</p>
+				<h5>${video.title.cutString(17)}</h5>
+				<p>${video.video_desc.htmlText().cutString(10)}</p>
 			</a>
 		</li>
 		#{/if}
