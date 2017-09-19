@@ -1,20 +1,15 @@
 #{list videos, as:'video'}
-<div class="item">
-	#{if video.cover}
-	<div class="item-img">
-		<a href="/video?id=${video.id}">
-			<img src="${video.cover}" />
-		</a>
-	</div>
-	#{/if}
-	<div class="item-content">
-		<div class="item-heading"><a href="/video?id=${video.id}">${video.title}</a></div>
-		<div class="item-tag">
-			<span class="time">${video.createDate.format('yyyy-MM-dd HH:mm:ss')}</span>
-		</div>
-		<div class="item-nr">
-			${video.video_desc.htmlText().cutString(150)}
-		</div>
-	</div>
+<div class="col-md-4">
+	<a class="card" href="/video?id=${video.id}">
+	  #{if video.cover}
+	      <img src="${video.cover}" style="height:165px;width:100%;"/>
+	  #{/if}
+	  <div class="card-heading"><strong>${video.title}</strong></div>
+	  <div class="card-content text-muted"><small>${video.video_desc.htmlText().cutString(15)}</small></div>
+	  <div class="card-actions">
+	      <span class="label label-warning">牡丹亭</span>
+	      <div class="pull-right"><i class="icon-comments-alt"></i> 520</div>
+	  </div>
+	</a>
 </div>
 #{/list}

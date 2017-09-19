@@ -3,7 +3,7 @@
 <div id="main">
 	<div class="row">
 		<div class="col-md-9">
-			<div id="video-content">
+			<div id="article-content">
 				<div class="art-heading">
 					<h2>${video.title}</h2>
 					<p class="art-about">
@@ -17,7 +17,11 @@
 					</p>
 				</div>
 				<div class="art-body">
-					${video.video_url}
+					<div id="video">
+						<video src="${video.video_url}" controls="controls">
+							Your browser does not support the video tag.
+						</video>
+					</div>
 				</div>
 				<div class="art-foot">
 					<div class="zs">

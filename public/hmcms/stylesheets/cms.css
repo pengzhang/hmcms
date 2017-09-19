@@ -508,6 +508,16 @@ footer p{
 	margin-bottom: 0px;
 	padding:10px;
 }
+
+#video{
+	width: 830px;
+	text-align:center;
+	margin: 30px auto;
+}
+.art-body video{
+	width:650px;
+	height: 500px;
+}
 .art-body img{
 	width:100%;
 	margin-bottom: 20px;

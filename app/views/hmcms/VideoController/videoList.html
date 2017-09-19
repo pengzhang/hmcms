@@ -34,37 +34,28 @@
 			#{/if}
 			<div id="hotnews">
 				<div class="hot-header">
-					<ul class="nav nav-pills pull-right">
-						<li class="active">
-							<a href="#tab1" class="newest" data-toggle="tab">最新</a>
-						</li>
-						<li>
-							<a href="#tab2" class="hotest" data-toggle="tab">最热</a>
-						</li>
-						<li>
-							<a href="#tab3" class="focusest" data-toggle="tab">焦点</a>
-						</li>
-					</ul>
 					<b>视频列表</b>
 				</div>
 				<div class="tab-content">
 					<div class="tab-pane in active" id="tab1">
 						<div class="hot-content">
 							<div id="section">
-							#{include '/hmcms/VideoController/sectionVideos.html' /}
+								<div class="cards">
+									#{include '/hmcms/VideoController/sectionVideos.html' /}
+								</div>
 							</div>
 							<div class="readmore"><a href="javascript:;" class="newest">加载更多 <i class="icon-chevron-down"></i></a></div>
 						</div>
 					</div>
 					<div class="tab-pane" id="tab2">
 						<div class="hot-content">
-							<div id="section"></div>
+							<div id="section"><div class="cards"></div></div>
 							<div class="readmore"><a href="javascript:;" class="hotest">加载更多 <i class="icon-chevron-down"></i></a></div>
 						</div>
 					</div>
 					<div class="tab-pane" id="tab3">
 						<div class="hot-content">
-							<div id="section"></div>
+							<div id="section"><div class="cards"></div></div>
 							<div class="readmore"><a href="javascript:;" class="focusest">加载更多 <i class="icon-chevron-down"></i></a></div>
 						</div>
 					</div>
@@ -81,54 +72,16 @@
 <script>
 	$(function(){
 		var newestPage = 2;
-		var hotestPage = 1;
-		var focusestPage = 1;
 		$(".newest").click(function(){
 			$.ajax({
 				url:'/videos?ajax=1&page='+newestPage,
 				type:'get',
 				success:function(data){
 					if(data){
-						$("#tab1 .hot-content #section").append(data);
+						$("#tab1 .hot-content #section .cards").append(data);
 						newestPage++;
 					}else{
 						$("#tab1 .readmore").remove();
-					}
-				},
-				error:function(e){
-					console.log(e);
-				}
-			})
-		})
-		
-		$(".hotest").click(function(){
-			$.ajax({
-				url:'/videos/hot?page='+hotestPage,
-				type:'get',
-				success:function(data){
-					if(data){
-						$("#tab2 .hot-content #section").append(data);
-						hotestPage++;
-					}else{
-						$("#tab2 .readmore").remove();
-					}
-				},
-				error:function(e){
-					console.log(e);
-				}
-			})
-		})
-		
-		$(".focusest").click(function(){
-			$.ajax({
-				url:'/videos/focus?page='+focusestPage,
-				type:'get',
-				success:function(data){
-					if(data){
-						$("#tab3 .hot-content #section").html(data);
-						focusestPage++;
-					}else{
-						$("#tab3 .readmore").remove();
 					}
 				},
 				error:function(e){
