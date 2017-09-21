@@ -2,13 +2,15 @@ package controllers.hmcms;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 
 import controllers.ActionIntercepter;
 import controllers.BaseController;
-import models.hmcms.Video;
 import models.hmcms.Comment;
 import models.hmcms.Tag;
+import models.hmcms.Video;
 import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
 import models.hmcore.common.ResponseData;
@@ -20,6 +22,9 @@ import plugins.router.Post;
 
 @With({ActionIntercepter.class})
 public class VideoController extends BaseController {
+	
+	@Inject
+	static Video service;
 	
 	@Get("/video")
 	public static void video(long id) {
@@ -58,7 +63,7 @@ public class VideoController extends BaseController {
 
 	@Get("/videos")
 	public static void videoList(int page, int size, int ajax) {
-		List<Video> videos = Video.find("status=? order by updateDate desc",false).fetch(page, size);
+		List<Video> videos = service.getNewestList(page, size);
 		if(ajax == 1) {
 			render("/hmcms/VideoController/sectionVideos.html",videos,page,size);
 		}
@@ -67,27 +72,27 @@ public class VideoController extends BaseController {
 	
 	@Get("/videos/hot")
 	public static void videoByHot(int page, int size) {
-		List<Video> videos = Video.find("select a from Video a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.updateDate desc",false).fetch(page, size);
+		List<Video> videos = service.videoByHot(page, size);
 		page = page + 2;
 		render("/hmcms/VideoController/sectionVideos.html", videos, page, size);
 	}
 	
 	@Get("/videos/focus")
 	public static void videoByFocus(int page, int size) {
-		List<Video> videos = Video.find("recommend=? and quality=? and status=? order by updateDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
+		List<Video> videos = service.videoByFocus(page, size);
 		render("/hmcms/VideoController/sectionVideos.html", videos, page, size);
 	}
 
 	@Get("/videos/by/category")
 	public static void videoByCategoryList(long categoryId, int page, int size) {
-		List<Video> videos = Video.find("select a from Video a left join a.categories c where c.id=? and a.status=?", categoryId, false).fetch(page, size);
+		List<Video> videos = service.videoByCategoryList(categoryId, page, size);
 		render(videos, categoryId, page, size);
 	}
 
 	@Get("/videos/by/tag")
 	public static void videoByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);
-		List<Video> videos = Video.find("select a from Video a left join a.tags t where t.id=? and a.status=? order by a.updateDate desc", tagId, false).fetch(page, size);
+		List<Video> videos = service.videoByTagList(tagId, page, size);
 		if(ajax == 1) {
 			render("/hmcms/VideoController/sectionVideos.html", videos, tagId, tag, page, size);
 		}
@@ -118,7 +123,7 @@ public class VideoController extends BaseController {
 	private static void getTags(){
 		List<Tag> tags = (List<Tag>) Cache.get("video_tags");
 		if(tags == null) {
-			tags = Tag.find("select t from Video a left join a.tags as t where a.status=? group by t.tag order by t.createDate desc", false).fetch(10);
+			tags = service.getVideoTags(10);
 			Cache.set("video_tags", tags, "1h");
 		}
 		renderArgs.put("video_tags", tags);
@@ -128,7 +133,7 @@ public class VideoController extends BaseController {
 	private static void getRecommendVideos(){
 		List<Video> recommendVideos = (List<Video>) Cache.get("video_recommends"); 
 		if(recommendVideos == null) {
-			recommendVideos = Video.find("recommend=? and status=?order by createDate desc", Recommend.recommend, false).fetch(3);
+			recommendVideos = service.getRecommendVideo(3);
 			Cache.set("video_recommends", recommendVideos, "1h");
 		}
 		renderArgs.put("video_recommends", recommendVideos);

@@ -15,13 +15,18 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import annotations.Exclude;
 import annotations.Upload;
 import models.hmcms.enumtype.Open;
+import models.hmcms.enumtype.Quality;
+import models.hmcms.enumtype.Recommend;
 import models.hmcore.user.User;
 import play.data.validation.MaxSize;
 import play.db.jpa.JPA;
+import plugins.router.Get;
 
 /**
  * 文章
@@ -29,6 +34,7 @@ import play.db.jpa.JPA;
  *
  */
 @Entity
+@Component
 @Table(name="cms_article")
 @org.hibernate.annotations.Table(comment = "文章管理", appliesTo = "cms_article")
 public class Article extends CmsModel implements Serializable {
@@ -74,8 +80,36 @@ public class Article extends CmsModel implements Serializable {
 		JPA.em().createQuery("update Article a set a.view_total=:total where a.id=:id").setParameter("total", ++this.view_total).setParameter("id", this.id).executeUpdate();
 	}
 	
+	public List<Article> getNewestList(int page, int size) {
+		return Article.find("status=? order by updateDate desc",false).fetch(page, size);
+	}
+	
+	public List<Article> articleByHot(int page, int size) {
+		return Article.find("select a from Article a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.updateDate desc",false).fetch(page, size);
+	}
+	
+	public List<Article> articleByFocus(int page, int size) {
+		return Article.find("recommend=? and quality=? and status=? order by updateDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
+	}
+
+	public List<Article> articleByCategoryList(long categoryId, int page, int size) {
+		return Article.find("select a from Article a left join a.categories c where c.id=? and a.status=?", categoryId, false).fetch(page, size);
+	}
+
+	public List<Article> articleByTagList(long tagId, int page, int size) {
+		return Article.find("select a from Article a left join a.tags t where t.id=? and a.status=? order by a.updateDate desc", tagId, false).fetch(page, size);
+	}
+	
 	public List<Comment> getComments(int page, int size){
 		return Comment.find("select c from Article a left join a.comments c where a.id=? order by c.createDate desc", this.id).fetch(page, size);
+	}
+	
+	public List<Article> getArticleRecommend(int max){
+		return Article.find("recommend=? and status=?order by createDate desc", Recommend.recommend, false).fetch(max);
+	}
+	
+	public List<Tag> getArticleTags(int max){
+		 return Tag.find("select t from Article a left join a.tags as t where a.status=? group by t.tag order by t.createDate desc", false).fetch(max);
 	}
 
 	@Override

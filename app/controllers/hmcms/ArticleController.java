@@ -2,7 +2,10 @@ package controllers.hmcms;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
 
 import controllers.ActionIntercepter;
 import controllers.BaseController;
@@ -20,6 +23,9 @@ import plugins.router.Post;
 
 @With({ActionIntercepter.class})
 public class ArticleController extends BaseController {
+	
+	@Inject
+	static Article service;
 	
 	@Get("/article")
 	public static void article(long id) {
@@ -58,7 +64,7 @@ public class ArticleController extends BaseController {
 
 	@Get("/articles")
 	public static void articleList(int page, int size, int ajax) {
-		List<Article> articles = Article.find("status=? order by updateDate desc",false).fetch(page, size);
+		List<Article> articles = service.getNewestList(page, size);
 		if(ajax == 1) {
 			render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
 		}
@@ -67,27 +73,27 @@ public class ArticleController extends BaseController {
 	
 	@Get("/articles/hot")
 	public static void articleByHot(int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.comments c where a.status=? group by a.id order by count(c.id) desc, a.updateDate desc",false).fetch(page, size);
+		List<Article> articles = service.articleByHot(page, size);
 		page = page + 2;
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 	
 	@Get("/articles/focus")
 	public static void articleByFocus(int page, int size) {
-		List<Article> articles = Article.find("recommend=? and quality=? and status=? order by updateDate desc", Recommend.recommend, Quality.quality, false).fetch(page, size);
+		List<Article> articles =  service.articleByFocus(page, size);
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 
 	@Get("/articles/by/category")
 	public static void articleByCategoryList(long categoryId, int page, int size) {
-		List<Article> articles = Article.find("select a from Article a left join a.categories c where c.id=? and a.status=?", categoryId, false).fetch(page, size);
+		List<Article> articles = service.articleByCategoryList(categoryId, page, size);
 		render(articles, categoryId, page, size);
 	}
 
 	@Get("/articles/by/tag")
 	public static void articleByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);
-		List<Article> articles = Article.find("select a from Article a left join a.tags t where t.id=? and a.status=? order by a.updateDate desc", tagId, false).fetch(page, size);
+		List<Article> articles = service.articleByTagList(tagId, page, size);
 		if(ajax == 1) {
 			render("/hmcms/ArticleController/sectionArticles.html", articles, tagId, tag, page, size);
 		}
@@ -118,7 +124,7 @@ public class ArticleController extends BaseController {
 	private static void getTags(){
 		List<Tag> tags = (List<Tag>) Cache.get("article_tags");
 		if(tags == null) {
-			tags = Tag.find("select t from Article a left join a.tags as t where a.status=? group by t.tag order by t.createDate desc", false).fetch(10);
+			tags = service.getArticleTags(10);
 			Cache.set("article_tags", tags, "1h");
 		}
 		renderArgs.put("article_tags", tags);
@@ -128,7 +134,7 @@ public class ArticleController extends BaseController {
 	private static void getRecommendArticles(){
 		List<Article> recommendArticles = (List<Article>) Cache.get("article_recommends"); 
 		if(recommendArticles == null) {
-			recommendArticles = Article.find("recommend=? and status=?order by createDate desc", Recommend.recommend, false).fetch(3);
+			recommendArticles = service.getArticleRecommend(3);
 			Cache.set("article_recommends", recommendArticles, "1h");
 		}
 		renderArgs.put("article_recommends", recommendArticles);
