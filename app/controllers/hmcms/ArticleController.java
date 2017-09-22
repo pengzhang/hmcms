@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 
+import annotations.DefaultPageParam;
 import controllers.ActionIntercepter;
 import controllers.BaseController;
 import models.hmcms.Article;
@@ -25,15 +26,10 @@ public class ArticleController extends BaseController {
 	@Inject
 	static ArticleService service;
 	
-	@Get("/article.{format}")
+	@Get("/article")
 	public static void article(long id) {
 		Article article = Article.findById(id);
 		service.addView(id, article.view_total);
-		if(request.format.equals("json")) {
-			renderJSON(article);
-		}else if(request.format.equals("xml")) {
-			renderXml(article);
-		}
 		render(article);
 	}
 	
@@ -56,6 +52,7 @@ public class ArticleController extends BaseController {
 		render("/hmcms/ArticleController/sectionComment.html",comment);
 	}
 	
+	@DefaultPageParam
 	@Get("/article/get/comments")
 	public static void getCommentList(long id, int page, int size) {
 		Article article = Article.findById(id);
@@ -64,6 +61,7 @@ public class ArticleController extends BaseController {
 		
 	}
 
+	@DefaultPageParam
 	@Get("/articles")
 	public static void articleList(int page, int size, int ajax) {
 		List<Article> articles = service.getNewestList(page, size);
@@ -73,6 +71,7 @@ public class ArticleController extends BaseController {
 		render(articles,page,size);
 	}
 	
+	@DefaultPageParam
 	@Get("/articles/hot")
 	public static void articleByHot(int page, int size) {
 		List<Article> articles = service.articleByHot(page, size);
@@ -80,18 +79,21 @@ public class ArticleController extends BaseController {
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 	
+	@DefaultPageParam
 	@Get("/articles/focus")
 	public static void articleByFocus(int page, int size) {
 		List<Article> articles =  service.articleByFocus(page, size);
 		render("/hmcms/ArticleController/sectionArticles.html", articles, page, size);
 	}
 
+	@DefaultPageParam
 	@Get("/articles/by/category")
 	public static void articleByCategoryList(long categoryId, int page, int size) {
 		List<Article> articles = service.articleByCategoryList(categoryId, page, size);
 		render(articles, categoryId, page, size);
 	}
 
+	@DefaultPageParam
 	@Get("/articles/by/tag")
 	public static void articleByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);

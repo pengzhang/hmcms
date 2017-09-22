@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 
+import annotations.DefaultPageParam;
 import controllers.ActionIntercepter;
 import controllers.BaseController;
 import models.hmcms.Comment;
@@ -51,6 +52,7 @@ public class VideoController extends BaseController {
 		render("/hmcms/VideoController/sectionComment.html",comment);
 	}
 	
+	@DefaultPageParam
 	@Get("/video/get/comments")
 	public static void getCommentList(long id, int page, int size) {
 		Video video = Video.findById(id);
@@ -59,6 +61,7 @@ public class VideoController extends BaseController {
 		
 	}
 
+	@DefaultPageParam
 	@Get("/videos")
 	public static void videoList(int page, int size, int ajax) {
 		List<Video> videos = service.getNewestList(page, size);
@@ -67,7 +70,8 @@ public class VideoController extends BaseController {
 		}
 		render(videos,page,size);
 	}
-	
+
+	@DefaultPageParam
 	@Get("/videos/hot")
 	public static void videoByHot(int page, int size) {
 		List<Video> videos = service.videoByHot(page, size);
@@ -75,18 +79,21 @@ public class VideoController extends BaseController {
 		render("/hmcms/VideoController/sectionVideos.html", videos, page, size);
 	}
 	
+	@DefaultPageParam
 	@Get("/videos/focus")
 	public static void videoByFocus(int page, int size) {
 		List<Video> videos = service.videoByFocus(page, size);
 		render("/hmcms/VideoController/sectionVideos.html", videos, page, size);
 	}
 
+	@DefaultPageParam
 	@Get("/videos/by/category")
 	public static void videoByCategoryList(long categoryId, int page, int size) {
 		List<Video> videos = service.videoByCategoryList(categoryId, page, size);
 		render(videos, categoryId, page, size);
 	}
 
+	@DefaultPageParam
 	@Get("/videos/by/tag")
 	public static void videoByTagList(long tagId, int page, int size, int ajax) {
 		Tag tag = Tag.findById(tagId);
