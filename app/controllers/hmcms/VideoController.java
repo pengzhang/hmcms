@@ -11,25 +11,24 @@ import controllers.BaseController;
 import models.hmcms.Comment;
 import models.hmcms.Tag;
 import models.hmcms.Video;
-import models.hmcms.enumtype.Quality;
-import models.hmcms.enumtype.Recommend;
 import models.hmcore.common.ResponseData;
 import play.cache.Cache;
 import play.mvc.Before;
 import play.mvc.With;
 import plugins.router.Get;
 import plugins.router.Post;
+import services.hmcms.VideoService;
 
 @With({ActionIntercepter.class})
 public class VideoController extends BaseController {
 	
 	@Inject
-	static Video service;
+	static VideoService service;
 	
 	@Get("/video")
 	public static void video(long id) {
 		Video video = Video.findById(id);
-		video.addView();
+		service.addView(id, video.view_total);
 		render(video);
 	}
 	
@@ -48,15 +47,14 @@ public class VideoController extends BaseController {
 	
 	@Post("/video/add/comment")
 	public static void addComment(long id, Comment comment) {
-		Video video = Video.findById(id);
-		comment = video.addComment(comment,currentUser());
+		comment = service.addComment(id, comment,currentUser());
 		render("/hmcms/VideoController/sectionComment.html",comment);
 	}
 	
 	@Get("/video/get/comments")
 	public static void getCommentList(long id, int page, int size) {
 		Video video = Video.findById(id);
-		List<Comment> comments = video.getComments(page, size);
+		List<Comment> comments = service.getComments(id, page, size);
 		render("/hmcms/VideoController/sectionCommentList.html", video, comments, page, size);
 		
 	}
@@ -100,27 +98,12 @@ public class VideoController extends BaseController {
 	}
 	
 	@Before
-	private static void nav() {
+	static void nav() {
 		renderArgs.put("nav", "video");
 	}
 	
-	@Before
-	private static void page() {
-		String page = request.params.get("page");
-		if(page == null) {
-			request.params.put("page", "1");
-		}else if(Integer.parseInt(page) < 1) {
-			request.params.put("page", "1");
-		}
-		
-		String size = request.params.get("size");
-		if(size == null) {
-			request.params.put("size", "10");
-		}
-	}
-	
 	@Before()
-	private static void getTags(){
+	static void getTags(){
 		List<Tag> tags = (List<Tag>) Cache.get("video_tags");
 		if(tags == null) {
 			tags = service.getVideoTags(10);
@@ -130,7 +113,7 @@ public class VideoController extends BaseController {
 	}
 	
 	@Before(only= {"video","videoList"})
-	private static void getRecommendVideos(){
+	static void getRecommendVideos(){
 		List<Video> recommendVideos = (List<Video>) Cache.get("video_recommends"); 
 		if(recommendVideos == null) {
 			recommendVideos = service.getRecommendVideo(3);
@@ -139,5 +122,11 @@ public class VideoController extends BaseController {
 		renderArgs.put("video_recommends", recommendVideos);
 	}
 	
+	@Before(only="video")
+	static void getTop10Comment() {
+		String id = request.params.get("id");
+		List<Comment> comments = service.getComments(Long.parseLong(id), 1, 10);
+		renderArgs.put("comments", comments);
+	}
 
 }

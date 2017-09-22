@@ -1,7 +1,7 @@
 <div id="question-reply">
 	<div class="form-title" style="margin:10px 0;">评论数(${video.comments.size()})</div>
 		<ul class="reply-list">
-			#{list video.getComments(1, 10), as:'comment'}
+			#{list comments, as:'comment'}
 				#{include '/hmcms/VideoController/sectionComment.html' /}
 			#{/list}
 		</ul>

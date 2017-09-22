@@ -41,26 +41,10 @@ public class Comment extends BaseModel implements Serializable{
 	@ManyToOne
 	@JoinTable(name="cms_video_comment", joinColumns=@JoinColumn(name = "comment_id"), inverseJoinColumns=@JoinColumn(name = "video_id"))
 	public Video video;
-	
-	public Comment addArticleComment(Article article, User user){
-		this.article = article;
-		this.user = user;
-		create();
-		return this;
-	}
-	
-	public Comment addVideoComment(Video video, User user){
-		this.video = video;
-		this.user = user;
-		create();
-		return this;
-	}
 
 	@Override
 	public String toString() {
 		return StringUtils.substring(comment, 0, 10);
 	}
-	
-	
 	
 }
