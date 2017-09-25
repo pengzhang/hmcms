@@ -21,11 +21,7 @@ import play.db.jpa.JPA;
 public class VideoService {
 	
 	public Comment addComment(long id, Comment comment, User user){
-		Video video = Video.findById(id);
-		comment.video = video;
-		comment.user = user;
-		comment.save();
-		return comment;
+		return comment.addVideo(Video.findById(id)).addUser(user).save();
 	}
 	
 	public void addView(long id, long view_total){

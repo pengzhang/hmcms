@@ -21,11 +21,7 @@ import play.db.jpa.JPA;
 public class ArticleService {
 	
 	public Comment addComment(long id, Comment comment, User user){
-		Article article = Article.findById(id);
-		comment.article = article;
-		comment.user = user;
-		comment.save();
-		return comment;
+		return comment.addArticle(Article.findById(id)).addUser(user).save();
 	}
 	
 	public void addView(long id, long view_total){
