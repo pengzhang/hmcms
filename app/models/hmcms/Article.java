@@ -61,6 +61,11 @@ public class Article extends CmsModel implements Serializable {
 	@LazyCollection(value = LazyCollectionOption.EXTRA)
 	public List<Comment> comments = new ArrayList<>();
 	
+	@Exclude
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="article")
+	@LazyCollection(value = LazyCollectionOption.EXTRA)
+	public List<UserLike> likes = new ArrayList<>();
+	
 	@ManyToMany(cascade=CascadeType.ALL)
 	public List<Tag> tags = new ArrayList<>();
 

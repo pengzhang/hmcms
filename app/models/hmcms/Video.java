@@ -70,6 +70,11 @@ public class Video extends CmsModel implements Serializable {
 	@LazyCollection(value = LazyCollectionOption.EXTRA)
 	public List<Comment> comments = new ArrayList<>();
 	
+	@Exclude
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="video")
+	@LazyCollection(value = LazyCollectionOption.EXTRA)
+	public List<UserLike> likes = new ArrayList<>();
+	
 	@ManyToMany(cascade=CascadeType.REFRESH)
 	public List<Tag> tags = new ArrayList<>();
 	

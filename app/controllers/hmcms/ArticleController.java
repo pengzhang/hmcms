@@ -4,9 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-
 import annotations.DefaultPageParam;
+import annotations.Login;
 import controllers.ActionIntercepter;
 import controllers.BaseController;
 import models.hmcms.Article;
@@ -20,6 +19,7 @@ import plugins.router.Get;
 import plugins.router.Post;
 import services.hmcms.ArticleService;
 
+@Login(only= {"articleLike", "addComment"})
 @With({ActionIntercepter.class})
 public class ArticleController extends BaseController {
 	
@@ -35,15 +35,14 @@ public class ArticleController extends BaseController {
 	
 	@Get("/article/like")
 	public static void articleLike(long id) {
-		//TODO 关联点赞表
-		if(StringUtils.isNotEmpty(session.get("uid"))) {
-			Article article = Article.findById(id);
-			article.like_total += 1;
-			article.save();
+		Article article = Article.findById(id);
+		if(service.checkUserLike(article, currentUser())) {
+			service.addLike(article, currentUser());
 			renderJSON(ResponseData.response(true, "点赞成功"));
 		}else {
-			renderJSON(ResponseData.response(false, "请登录后点赞"));
+			renderJSON(ResponseData.response(true, "已点过赞"));
 		}
+		
 	}
 	
 	@Post("/article/add/comment")
@@ -63,9 +62,9 @@ public class ArticleController extends BaseController {
 
 	@DefaultPageParam
 	@Get("/articles")
-	public static void articleList(int page, int size, int ajax) {
+	public static void articleList(int page, int size) {
 		List<Article> articles = service.getNewestList(page, size);
-		if(ajax == 1) {
+		if(request.isAjax()) {
 			render("/hmcms/ArticleController/sectionArticles.html",articles,page,size);
 		}
 		render(articles,page,size);
@@ -95,10 +94,10 @@ public class ArticleController extends BaseController {
 
 	@DefaultPageParam
 	@Get("/articles/by/tag")
-	public static void articleByTagList(long tagId, int page, int size, int ajax) {
+	public static void articleByTagList(long tagId, int page, int size) {
 		Tag tag = Tag.findById(tagId);
 		List<Article> articles = service.articleByTagList(tagId, page, size);
-		if(ajax == 1) {
+		if(request.isAjax()) {
 			render("/hmcms/ArticleController/sectionArticles.html", articles, tagId, tag, page, size);
 		}
 		render(articles, tagId, tag, page, size);

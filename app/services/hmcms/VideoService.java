@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import models.hmcms.Comment;
 import models.hmcms.Tag;
+import models.hmcms.UserLike;
 import models.hmcms.Video;
 import models.hmcms.enumtype.Quality;
 import models.hmcms.enumtype.Recommend;
@@ -22,6 +23,14 @@ public class VideoService {
 	
 	public Comment addComment(long id, Comment comment, User user){
 		return comment.addVideo(Video.findById(id)).addUser(user).save();
+	}
+	
+	public UserLike addLike(Video video, User user) {
+		return new UserLike().addVideo(video).addUser(user).save();
+	}
+	
+	public boolean checkUserLike(Video video, User user) {
+		return UserLike.find("video=? and user=?", video, user).first() == null;
 	}
 	
 	public void addView(long id, long view_total){

@@ -1,18 +1,25 @@
 package models.hmcms;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
+import annotations.Exclude;
 import models.BaseModel;
 import models.hmcore.user.User;
 import play.data.validation.MaxSize;
@@ -41,6 +48,11 @@ public class Comment extends BaseModel implements Serializable{
 	@ManyToOne
 	@JoinTable(name="cms_video_comment", joinColumns=@JoinColumn(name = "comment_id"), inverseJoinColumns=@JoinColumn(name = "video_id"))
 	public Video video;
+	
+	@Exclude
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="comment")
+	@LazyCollection(value = LazyCollectionOption.EXTRA)
+	public List<UserLike> likes = new ArrayList<>();
 	
 	public Comment addArticle(Article article) {
 		this.article = article;

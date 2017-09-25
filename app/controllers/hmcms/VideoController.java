@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 
 import annotations.DefaultPageParam;
+import annotations.Login;
 import controllers.ActionIntercepter;
 import controllers.BaseController;
 import models.hmcms.Comment;
@@ -20,6 +21,7 @@ import plugins.router.Get;
 import plugins.router.Post;
 import services.hmcms.VideoService;
 
+@Login(only= {"videoLike", "addComment"})
 @With({ActionIntercepter.class})
 public class VideoController extends BaseController {
 	
@@ -35,14 +37,12 @@ public class VideoController extends BaseController {
 	
 	@Get("/video/like")
 	public static void videoLike(long id) {
-		//TODO 关联点赞表
-		if(StringUtils.isNotEmpty(session.get("uid"))) {
-			Video video = Video.findById(id);
-			video.like_total += 1;
-			video.save();
+		Video video = Video.findById(id);
+		if(service.checkUserLike(video, currentUser())) {
+			service.addLike(video, currentUser());
 			renderJSON(ResponseData.response(true, "点赞成功"));
 		}else {
-			renderJSON(ResponseData.response(false, "请登录后点赞"));
+			renderJSON(ResponseData.response(true, "已点过赞"));
 		}
 	}
 	
@@ -63,9 +63,10 @@ public class VideoController extends BaseController {
 
 	@DefaultPageParam
 	@Get("/videos")
-	public static void videoList(int page, int size, int ajax) {
+	public static void videoList(int page, int size) {
+		
 		List<Video> videos = service.getNewestList(page, size);
-		if(ajax == 1) {
+		if(request.isAjax()) {
 			render("/hmcms/VideoController/sectionVideos.html",videos,page,size);
 		}
 		render(videos,page,size);
@@ -95,10 +96,10 @@ public class VideoController extends BaseController {
 
 	@DefaultPageParam
 	@Get("/videos/by/tag")
-	public static void videoByTagList(long tagId, int page, int size, int ajax) {
+	public static void videoByTagList(long tagId, int page, int size) {
 		Tag tag = Tag.findById(tagId);
 		List<Video> videos = service.videoByTagList(tagId, page, size);
-		if(ajax == 1) {
+		if(request.isAjax()) {
 			render("/hmcms/VideoController/sectionVideos.html", videos, tagId, tag, page, size);
 		}
 		render(videos, tagId, tag, page, size);
