@@ -1,0 +1,81 @@
+<div id="question-reply">
+	<div class="form-title" style="margin:10px 0;">评论数(${video.comments.size()})</div>
+		<ul class="reply-list">
+			#{list comments, as:'comment'}
+				#{include '/cms/VideoController/sectionComment.html' /}
+			#{/list}
+		</ul>
+		#{if video.comments.size() > 10}
+		<div class="readmore"><a href="javascript:;" class="focusest">加载更多 <i class="icon-chevron-down"></i></a></div>
+		#{/if}
+	<div class="reply-form">
+		<form action="#" method="post">
+			<div class="form-group">
+				<div class="editbox">
+					<div class="editmenu">
+						<a href="javascript:;" title="图片" id="edit-image">
+							<i class="icon-file-image"></i> 图片
+						</a>
+						<a href="javascript:;" title="表情" id="edit-smile">
+							<i class="icon-smile"></i> 表情
+						</a>
+						<a href="javascript:;" title="全屏" id="edit-expand">
+							<i class="icon-expand-full"></i> 全屏
+						</a>
+						<a href="javascript:;" title="预览" id="edit-show">
+							<i class="icon-check-circle"></i> 预览
+						</a>
+					</div>
+					<textarea class="form-control" rows="6" name="content" id="content" placeholder="说点什么吧！"></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<button type="button" class="btn btn-primary" id="send_comment">我要评论</button>
+			</div>
+		</form>
+	</div>
+</div>
+#{set 'commentScripts'}
+<script>
+	$(function(){
+		$("#send_comment").click(function(){
+			var content = $("#content").val();
+			$.ajax({
+				url:'/video/add/comment?id=${video.id}',
+				type:'post',
+				data:{'comment.comment':content},
+				success:function(data){
+					$(".reply-list").prepend(data);
+					$("#content").val('');
+					new $.zui.Messager('评论成功', {
+				        icon: 'icon-comment',
+				        placement:'bottom',
+				        type:'success'
+				    }).show();
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		var commentPage = 2;
+		$(".readmore").click(function(){
+			$.ajax({
+				url:'/video/get/comments?id=${video.id}&size=10&page='+commentPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$(".reply-list").append(data);
+						commentPage++;
+					}else{
+						$(".readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+	})
+</script>
+#{/set}

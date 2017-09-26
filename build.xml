@@ -29,7 +29,7 @@
                 <include name="**/play.static"/>
             </fileset>
         </copy>
-        <jar destfile="lib/play-hmcms.jar" basedir="tmp/classes">
+        <jar destfile="lib/play-cms.jar" basedir="tmp/classes">
             <manifest>
                 <section name="Play-module">
                     <attribute name="Specification-Title" value="hmcms"/>

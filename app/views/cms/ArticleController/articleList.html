@@ -1,0 +1,141 @@
+#{extends '/cms/layout/cms.html' /}
+
+<div id="main">
+	<div class="row">
+		<div class="col-md-8">
+			#{if article_recommends}
+			<div id="carousel">
+				<div id="mycarousel" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						<li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+						<li data-target="#mycarousel" data-slide-to="1" class=""></li>
+						<li data-target="#mycarousel" data-slide-to="2" class=""></li>
+					</ol>
+					<div class="carousel-inner">
+					    %{ def f = 0}%
+						#{list article_recommends, as:'recommend'}
+						<div class="item #{if f==0}active#{/if}">
+							<img alt="${recommend.title}" src="${recommend.cover}">
+							<div class="carousel-caption">
+								<h3>${recommend.title}</h3>
+							</div>
+						</div>
+						%{f++}%
+						#{/list}
+					</div>
+					<a class="left carousel-control" href="#mycarousel" data-slide="prev">
+						<span class="icon icon-chevron-left"></span>
+					</a>
+					<a class="right carousel-control" href="#mycarousel" data-slide="next">
+						<span class="icon icon-chevron-right"></span>
+					</a>
+				</div>
+			</div>
+			#{/if}
+			<div id="hotnews">
+				<div class="hot-header">
+					<ul class="nav nav-pills pull-right">
+						<li class="active">
+							<a href="#tab1" class="newest" data-toggle="tab">最新</a>
+						</li>
+						<li>
+							<a href="#tab2" class="hotest" data-toggle="tab">最热</a>
+						</li>
+						<li>
+							<a href="#tab3" class="focusest" data-toggle="tab">焦点</a>
+						</li>
+					</ul>
+					<b>文章列表</b>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane in active" id="tab1">
+						<div class="hot-content">
+							<div id="section">
+							#{include '/cms/ArticleController/sectionArticles.html' /}
+							</div>
+							<div class="readmore"><a href="javascript:;" class="newest">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab2">
+						<div class="hot-content">
+							<div id="section"></div>
+							<div class="readmore"><a href="javascript:;" class="hotest">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab3">
+						<div class="hot-content">
+							<div id="section"></div>
+							<div class="readmore"><a href="javascript:;" class="focusest">加载更多 <i class="icon-chevron-down"></i></a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			#{include '/cms/ArticleController/articlesTagSideBar.html' /}
+		</div>
+	</div>
+</div>
+
+#{set 'js'}
+<script>
+	$(function(){
+		var newestPage = 2;
+		var hotestPage = 1;
+		var focusestPage = 1;
+		$(".newest").click(function(){
+			$.ajax({
+				url:'/articles?ajax=1&page='+newestPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$("#tab1 .hot-content #section").append(data);
+						newestPage++;
+					}else{
+						$("#tab1 .readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		
+		$(".hotest").click(function(){
+			$.ajax({
+				url:'/articles/hot?page='+hotestPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$("#tab2 .hot-content #section").append(data);
+						hotestPage++;
+					}else{
+						$("#tab2 .readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+		
+		$(".focusest").click(function(){
+			$.ajax({
+				url:'/articles/focus?page='+focusestPage,
+				type:'get',
+				success:function(data){
+					if(data){
+						$("#tab3 .hot-content #section").html(data);
+						focusestPage++;
+					}else{
+						$("#tab3 .readmore").remove();
+					}
+				},
+				error:function(e){
+					console.log(e);
+				}
+			})
+		})
+	})
+</script>
+#{/set}

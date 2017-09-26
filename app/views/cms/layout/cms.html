@@ -1,0 +1,22 @@
+#{extends '/layout/main.html' /}
+
+#{include '/cms/layout/top.html' /}
+
+<div class="container">
+	#{include '/cms/layout/header.html' /}
+	#{doLayout /}
+</div>
+
+#{include '/cms/layout/footer.html' /}
+
+#{set 'moreStyles'}
+	<link href="/public/plugins/zui/css/zui-theme-green.css" rel="stylesheet">
+	<link rel="stylesheet" href="/public/cms/stylesheets/cms.css" />
+	
+	#{get 'css'/}
+#{/set}	
+
+#{set 'moreScripts'}
+	#{get 'topScripts'/}
+	#{get 'js'/}
+#{/set}	
